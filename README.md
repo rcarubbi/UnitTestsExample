@@ -49,3 +49,105 @@ To enable testing of internal classes, the following configuration is added in t
         <_Parameter1>Application.Tests</_Parameter1>
     </AssemblyAttribute>
 </ItemGroup>
+```
+
+### 3. **Snapshot Testing with Verify**
+The Verify library is used to compare test outputs. If discrepancies are detected, a diff tool opens to manually approve or reject changes. Random values like GUIDs are scrubbed for consistent comparisons.
+
+---
+
+## How to Run the Tests
+
+### Prerequisites
+- .NET SDK installed (version 7.0 or higher).
+
+### Steps
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/rcarubbi/UnitTestsExample.git
+   cd UnitTestsExample
+   ```
+
+2. Run the tests:
+   ```bash
+   dotnet test
+   ```
+
+### Notes on Verify Configuration
+- Verify requires the following additions to `.gitignore`:
+    ```gitignore
+    # Verify
+    *.received.*
+    *.received/
+    ```
+- The `.gitattributes` file should include:
+    ```gitattributes
+    # Verify
+    *.verified.txt text eol=lf working-tree-encoding=UTF-8
+    ```
+- The project includes a helper test to validate these configurations:
+    ```csharp
+    [Fact]
+    public Task VerifyCheck() => VerifyChecks.Run();
+    ```
+
+---
+
+## Naming Conventions for Tests
+
+This project showcases two common naming conventions for tests:
+1. **Given... When... Then...**
+   - Example: `GivenValidCommand_WhenHandleIsCalled_ThenCustomerIsCreated`.
+2. **Action... Should... When...**
+   - Example: `Handle_ShouldCreateCustomer_WhenCommandIsValid`.
+
+---
+
+## Examples of Tests
+
+### Handling Valid Commands
+```csharp
+[Fact]
+public async Task Handle_ShouldCreateCustomer_WhenCommandIsValid()
+{
+    // Arrange
+    var command = new CreateCustomerCommand(/* valid data */);
+    var sut = new CreateCustomerCommandHandler(_repositoryMock.Object);
+
+    // Act
+    var response = await sut.Handle(command, CancellationToken.None);
+
+    // Assert
+    _repositoryMock.Verify(x => x.Add(It.Is<Customer>(c => Compare(c, expectedCustomer)), CancellationToken.None), Times.Once);
+    await Verify(response);
+}
+```
+
+### Handling Invalid Commands
+```csharp
+[Fact]
+public async Task Handle_ShouldFail_WhenCustomerIsYoungerThan18YearsOld()
+{
+    // Arrange
+    var command = new CreateCustomerCommand(/* invalid age */);
+    var sut = new CreateCustomerCommandHandler(_repositoryMock.Object);
+
+    // Act
+    Func<Task> action = async () => await sut.Handle(command, CancellationToken.None);
+
+    // Assert
+    await action.Should().ThrowAsync<InvalidAgeException>();
+}
+```
+
+---
+
+## Contributions
+
+Feel free to fork, open issues, or submit pull requests to enhance this example repository.
+
+---
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
