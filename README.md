@@ -93,16 +93,6 @@ The Verify library is used to compare test outputs. If discrepancies are detecte
 
 ---
 
-## Naming Conventions for Tests
-
-This project showcases two common naming conventions for tests:
-1. **Given... When... Then...**
-   - Example: `GivenValidCommand_WhenHandleIsCalled_ThenCustomerIsCreated`.
-2. **Action... Should... When...**
-   - Example: `Handle_ShouldCreateCustomer_WhenCommandIsValid`.
-
----
-
 ## Examples of Tests
 
 ### Handling Valid Commands
