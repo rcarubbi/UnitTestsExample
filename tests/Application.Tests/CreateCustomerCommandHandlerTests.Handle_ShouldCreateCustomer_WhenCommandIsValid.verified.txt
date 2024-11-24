@@ -1,3 +1,6 @@
 ﻿{
-  Id: Guid_1
+  Id: Guid_1,
+  FirstName: {Scrubbed},
+  LastName: {Scrubbed},
+  Dob: Date_1
 }

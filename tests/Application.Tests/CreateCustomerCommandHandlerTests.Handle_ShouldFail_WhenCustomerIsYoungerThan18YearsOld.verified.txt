@@ -1,0 +1,8 @@
+﻿{
+  Type: InvalidAgeException,
+  Message: Customer must be at least 18 years old.,
+  StackTrace:
+at Domain.Entities.Customer.Validate()
+at Domain.Entities.Customer..ctor(String firstName, String lastName, String email, DateOnly dob, Gender gender)
+at Application.CreateCustomerCommandHandler.Handle(CreateCustomerCommand command, CancellationToken cancellationToken)
+}
